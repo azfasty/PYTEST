@@ -4,10 +4,7 @@ import time
 # Liste des URLs à ouvrir
 urls = [
     "https://www.google.com",
-    "https://www.youtube.com",
-    "https://www.github.com",
-    "https://www.wikipedia.org",
-    "https://www.reddit.com"
+    "https://www.youtube.com"
 ]
 
 # Ouvrir chaque URL dans un nouvel onglet
