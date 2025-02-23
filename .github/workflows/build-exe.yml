@@ -1,0 +1,36 @@
+name: Build EXE from Python script
+
+on:
+  push:
+    branches:
+      - main  # Ce workflow s'exécutera sur chaque push vers la branche "main"
+
+jobs:
+  build:
+    runs-on: windows-latest  # Utilise une machine virtuelle Windows pour créer le .exe
+
+    steps:
+    # Étape 1: Vérifier le code
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # Étape 2: Installer Python
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'  # Vous pouvez spécifier une version spécifique si nécessaire
+
+    # Étape 3: Installer PyInstaller
+    - name: Install PyInstaller
+      run: pip install pyinstaller
+
+    # Étape 4: Créer le fichier .exe avec PyInstaller
+    - name: Build EXE
+      run: pyinstaller --onefile ouvrir_pages.py  # Remplacez par le nom de votre fichier Python
+
+    # Étape 5: Téléchargez le fichier EXE créé comme artefact
+    - name: Upload EXE as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: open-pages-exe
+        path: dist/ouvrir_pages.exe  # C'est là où PyInstaller met le fichier .exe
