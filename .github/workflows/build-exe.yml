@@ -32,5 +32,5 @@ jobs:
     - name: Upload EXE as artifact
       uses: actions/upload-artifact@v4
       with:
-        name: open-pages-exe
+        name: tkt-exe
         path: dist/tkt.exe  # C'est là où PyInstaller met le fichier .exe
