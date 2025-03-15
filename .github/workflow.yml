@@ -22,10 +22,10 @@ jobs:
       run: pip install pyinstaller
 
     - name: Build EXE
-      run: pyinstaller --onefile ouvrir_pages.py
+      run: pyinstaller --onefile Alexnovia.py
 
     - name: Upload EXE as artifact
       uses: actions/upload-artifact@v2
       with:
         name: open-pages-exe
-        path: dist/ouvrir_pages.exe
+        path: dist/Alexnovia.exe
