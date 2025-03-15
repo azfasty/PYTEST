@@ -26,11 +26,11 @@ jobs:
 
     # Étape 4: Créer le fichier .exe avec PyInstaller
     - name: Build EXE
-      run: pyinstaller --onefile tkt.py  # Remplacez par le nom de votre fichier Python
+      run: pyinstaller --onefile Alexnovia.py  # Remplacez par le nom de votre fichier Python
 
     # Étape 5: Téléchargez le fichier EXE comme artefact
     - name: Upload EXE as artifact
       uses: actions/upload-artifact@v4
       with:
         name: tkt-exe
-        path: dist/tkt.exe  # C'est là où PyInstaller met le fichier .exe
+        path: dist/Alexnovia.exe  # C'est là où PyInstaller met le fichier .exe
