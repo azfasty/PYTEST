@@ -1,14 +1,19 @@
 name: Build EXE with PyInstaller
 
-on: [push, pull_request]  # Exécute le script à chaque push ou PR
+on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: windows-latest  # Utiliser une machine Windows pour générer un .exe
+    runs-on: windows-latest
 
     steps:
       - name: 📂 Cloner le repo
         uses: actions/checkout@v3
+
+      - name: 🔍 Vérifier la présence des fichiers nécessaires
+        run: |
+          if not exist image.jpg exit 1
+          if not exist son.mp3 exit 1
 
       - name: 🐍 Installer Python
         uses: actions/setup-python@v4
@@ -22,10 +27,10 @@ jobs:
 
       - name: 🏗️ Compiler en .exe avec PyInstaller
         run: |
-          pyinstaller --onefile --windowed --hidden-import=PIL --hidden-import=pygame --add-data="image.jpg;." --add-data="son.mp3;." Alexnovia.py
+          pyinstaller --onefile --windowed --hidden-import=PIL --hidden-import=pygame --add-data="image.jpg;image.jpg" --add-data="son.mp3;son.mp3" Alexnovia.py
 
       - name: 📁 Sauvegarder l'exécutable
         uses: actions/upload-artifact@v4
         with:
           name: Alexnovia
-          path: dist/Alexnovia.exe  # Le .exe est généré dans le dossier `dist/`
+          path: dist/Alexnovia.exe
