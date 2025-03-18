@@ -11,9 +11,11 @@ jobs:
         uses: actions/checkout@v3
 
       - name: 🔍 Vérifier la présence des fichiers nécessaires
+        shell: pwsh
         run: |
-          if not exist image.jpg exit 1
-          if not exist son.mp3 exit 1
+          if (!(Test-Path "image.jpg")) { Write-Host "❌ image.jpg manquant !"; exit 1 }
+          if (!(Test-Path "son.mp3")) { Write-Host "❌ son.mp3 manquant !"; exit 1 }
+        continue-on-error: false
 
       - name: 🐍 Installer Python
         uses: actions/setup-python@v4
@@ -27,7 +29,7 @@ jobs:
 
       - name: 🏗️ Compiler en .exe avec PyInstaller
         run: |
-          pyinstaller --onefile --windowed --hidden-import=PIL --hidden-import=pygame --add-data="image.jpg;image.jpg" --add-data="son.mp3;son.mp3" Alexnovia.py
+          pyinstaller --onefile --windowed --hidden-import=PIL --hidden-import=pygame --add-data="image.jpg;." --add-data="son.mp3;." Alexnovia.py
 
       - name: 📁 Sauvegarder l'exécutable
         uses: actions/upload-artifact@v4
