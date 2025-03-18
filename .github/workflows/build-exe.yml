@@ -13,7 +13,7 @@ jobs:
       - name: 🔍 Vérifier la présence des fichiers nécessaires
         shell: pwsh
         run: |
-          if (!(Test-Path "image.jpg")) { Write-Host "❌ image.jpg manquant !"; exit 1 }
+          if (!(Test-Path "image.jpeg")) { Write-Host "❌ image.jpg manquant !"; exit 1 }
           if (!(Test-Path "son.mp3")) { Write-Host "❌ son.mp3 manquant !"; exit 1 }
         continue-on-error: false
 
@@ -29,7 +29,7 @@ jobs:
 
       - name: 🏗️ Compiler en .exe avec PyInstaller
         run: |
-          pyinstaller --onefile --windowed --hidden-import=PIL --hidden-import=pygame --add-data="image.jpg;." --add-data="son.mp3;." Alexnovia.py
+          pyinstaller --onefile --windowed --hidden-import=PIL --hidden-import=pygame --add-data="image.jpeg;." --add-data="son.mp3;." Alexnovia.py
 
       - name: 📁 Sauvegarder l'exécutable
         uses: actions/upload-artifact@v4
