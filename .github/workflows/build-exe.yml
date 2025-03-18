@@ -28,4 +28,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: MonProgramme-EXE
-          path: dist/mon_script.exe  # Le .exe est généré dans le dossier `dist/`
+          path: dist/Alexnovia.exe  # Le .exe est généré dans le dossier `dist/`
